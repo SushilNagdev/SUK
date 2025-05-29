@@ -1,0 +1,27 @@
+public class Encapsule {
+    public static void main(String[] args) {
+        try {
+            BankAccount acc1 = new BankAccount("Ali Khan", "1234567890123456", "StrongP@ss1", 5000);
+            BankAccount acc2 = new BankAccount("Sara Ali", "9876543210987654", "Secure9Z", 10000);
+
+            acc1.deposit(2000);
+            acc2.deposit(500);
+
+            acc1.withdraw(1000, "StrongP@ss1");
+            acc2.changePassword("Secure9Z", "NewPass9X");
+
+            System.out.println("Masked Account Number for acc1: " + acc1.getMaskedAccountNumber());
+
+            System.out.println("acc1 Balance: $" + acc1.getBalance("StrongP@ss1"));
+            System.out.println("acc2 Balance: $" + acc2.getBalance("NewPass9X"));
+
+            System.out.println("\nacc1 Transactions:");
+            for (String record : acc1.getTransactionHistory("StrongP@ss1")) {
+                System.out.println(record);
+            }
+
+        } catch (InvalidPasswordException | InsufficientBalanceException | IllegalArgumentException e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+    }
+}
