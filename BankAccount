@@ -1,0 +1,111 @@
+import java.util.*;
+
+class InvalidPasswordException extends Exception {
+    public InvalidPasswordException(String message) {
+        super(message);
+    }
+}
+
+class InsufficientBalanceException extends Exception {
+    public InsufficientBalanceException(String message) {
+        super(message);
+    }
+}
+
+public class BankAccount {
+    private String accountHolderName;
+    private final String accountNumber;
+    private double balance;
+    private String password;
+    private List<String> transactionHistory;
+
+    public BankAccount(String accountHolderName, String accountNumber, String password, double initialBalance) {
+        if (accountHolderName == null || accountHolderName.trim().isEmpty()) {
+            throw new IllegalArgumentException("Account holder name cannot be empty.");
+        }
+
+        if (!isStrongPassword(password)) {
+            throw new IllegalArgumentException("Password must be at least 6 characters, contain a number, and a capital letter.");
+        }
+
+        if (initialBalance < 0) {
+            throw new IllegalArgumentException("Initial balance cannot be negative.");
+        }
+
+        this.accountHolderName = accountHolderName;
+        this.accountNumber = accountNumber;
+        this.password = password;
+        this.balance = initialBalance;
+        this.transactionHistory = new ArrayList<>();
+        transactionHistory.add("Account created with initial balance: $" + initialBalance);
+    }
+
+    public String getAccountHolderName() {
+        return accountHolderName;
+    }
+
+    public void setAccountHolderName(String name) {
+        if (name == null || name.trim().isEmpty()) {
+            throw new IllegalArgumentException("Name cannot be empty.");
+        }
+        this.accountHolderName = name;
+    }
+
+    public String getMaskedAccountNumber() {
+        return "XXXX-XXXX-" + accountNumber.substring(accountNumber.length() - 4);
+    }
+
+    private boolean isStrongPassword(String pwd) {
+        return pwd.length() >= 6 && pwd.matches(".*\\d.*") && pwd.matches(".*[A-Z].*");
+    }
+
+    public void changePassword(String oldPassword, String newPassword) throws InvalidPasswordException {
+        if (!this.password.equals(oldPassword)) {
+            throw new InvalidPasswordException("Incorrect old password.");
+        }
+
+        if (!isStrongPassword(newPassword)) {
+            throw new IllegalArgumentException("New password is not strong enough.");
+        }
+
+        this.password = newPassword;
+        transactionHistory.add("Password changed.");
+    }
+
+    public void deposit(double amount) {
+        if (amount <= 0) {
+            throw new IllegalArgumentException("Deposit amount must be positive.");
+        }
+        this.balance += amount;
+        transactionHistory.add("Deposited: $" + amount + " | New Balance: $" + balance);
+    }
+
+    public void withdraw(double amount, String password) throws InvalidPasswordException, InsufficientBalanceException {
+        if (!this.password.equals(password)) {
+            throw new InvalidPasswordException("Incorrect password.");
+        }
+        if (amount <= 0) {
+            throw new IllegalArgumentException("Withdrawal amount must be positive.");
+        }
+        if (amount > this.balance) {
+            throw new InsufficientBalanceException("Insufficient balance.");
+        }
+
+        this.balance -= amount;
+        transactionHistory.add("Withdrawn: $" + amount + " | Remaining Balance: $" + balance);
+    }
+
+    public double getBalance(String password) throws InvalidPasswordException {
+        if (!this.password.equals(password)) {
+            throw new InvalidPasswordException("Incorrect password.");
+        }
+        return this.balance;
+    }
+
+    public List<String> getTransactionHistory(String password) throws InvalidPasswordException {
+        if (!this.password.equals(password)) {
+            throw new InvalidPasswordException("Incorrect password.");
+        }
+        return new ArrayList<>(transactionHistory); // Return a copy to maintain encapsulation
+    }
+}
