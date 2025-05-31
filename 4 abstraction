@@ -126,7 +126,6 @@ class Administrator extends Person implements Evaluatable {
 
 public class abstractionu {
 
-    // Polymorphic method
     public static void processPerson(Person person) {
         person.displayDetails();
         if (person instanceof Evaluatable) {
