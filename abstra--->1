@@ -1,0 +1,74 @@
+abstract class Employee {
+    String name;
+    int id;
+    double salary;
+
+    public Employee(String name, int id, double salary) {
+        this.name = name;
+        this.id = id;
+        this.salary = salary;
+    }
+
+
+    public abstract double calculateBonus();
+
+    public void displayInfo() {
+        System.out.println("Name: " + name + ", ID: " + id + ", Salary: " + salary);
+        System.out.println("Bonus: " + calculateBonus());
+    }
+
+    @Override
+    public String toString() {
+        return "Name: " + name + ", ID: " + id + ", Salary: " + salary + ", Bonus: " + calculateBonus();
+    }
+}
+
+class Developer extends Employee {
+    public Developer(String name, int id, double salary) {
+        super(name, id, salary);
+    }
+
+    public double calculateBonus() {
+        return salary * 0.20;
+    }
+}
+
+class Designer extends Employee {
+    public Designer(String name, int id, double salary) {
+        super(name, id, salary);
+    }
+
+    public double calculateBonus() {
+        return salary * 0.15;
+    }
+}
+
+class Manager extends Employee {
+    public Manager(String name, int id, double salary) {
+        super(name, id, salary);
+    }
+
+    public double calculateBonus() {
+        return salary * 0.30;
+    }
+}
+
+
+public class abstractionu {
+    public static void main(String[] args) {
+
+        Manager manager = new Manager("Neetu", 2412355, 200000);
+        Designer designer = new Designer("Aastha", 2412333, 2000000);
+        Developer developer = new Developer("Sushil", 2412356, 200000);
+
+        System.out.println("Employee Details with Bonus:");
+        System.out.println(manager);
+        System.out.println(designer);
+        System.out.println(developer);
+
+        System.out.println("Displaying info:");
+        manager.displayInfo();
+        designer.displayInfo();
+        developer.displayInfo();
+    }
+}
