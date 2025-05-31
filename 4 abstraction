@@ -1,0 +1,157 @@
+interface Evaluatable {
+    void evaluatePerformance();
+}
+
+abstract class Person {
+    String name;
+    int age;
+    String email;
+
+    public Person(String name, int age, String email) throws IllegalArgumentException {
+        if (name == null || name.isEmpty() || age <= 0 || email == null || email.isEmpty()) {
+            throw new IllegalArgumentException("Invalid or incomplete person data.");
+        }
+        this.name = name;
+        this.age = age;
+        this.email = email;
+    }
+
+    public abstract void displayDetails();
+}
+
+class Student extends Person implements Evaluatable {
+    int rollNo;
+    double gpa;
+
+    public Student(String name, int age, String email, int rollNo, double gpa) {
+        super(name, age, email);
+        this.rollNo = rollNo;
+        this.gpa = gpa;
+    }
+
+    @Override
+    public void displayDetails() {
+        System.out.println("---- Student Details ----");
+        System.out.println("Name: " + name);
+        System.out.println("Age: " + age);
+        System.out.println("Email: " + email);
+        System.out.println("Roll No: " + rollNo);
+        System.out.println("GPA: " + gpa);
+    }
+
+    @Override
+    public void evaluatePerformance() {
+        if (gpa >= 3.5) {
+            System.out.println("Performance: Excellent");
+        } else if (gpa >= 2.5) {
+            System.out.println("Performance: Good");
+        } else {
+            System.out.println("Performance: Needs Improvement");
+        }
+    }
+}
+class Professor extends Person implements Evaluatable {
+    int employeeId;
+    int papersPublished;
+    int teachingHours;
+    double salary;
+
+    public Professor(String name, int age, String email, int employeeId, int papersPublished, int teachingHours, double salary) {
+        super(name, age, email);
+        this.employeeId = employeeId;
+        this.papersPublished = papersPublished;
+        this.teachingHours = teachingHours;
+        this.salary = salary;
+    }
+
+    @Override
+    public void displayDetails() {
+        System.out.println("---- Professor Details ----");
+        System.out.println("Name: " + name);
+        System.out.println("Age: " + age);
+        System.out.println("Email: " + email);
+        System.out.println("Employee ID: " + employeeId);
+        System.out.println("Papers Published: " + papersPublished);
+        System.out.println("Teaching Hours: " + teachingHours);
+        System.out.println("Salary: " + salary);
+    }
+
+    @Override
+    public void evaluatePerformance() {
+        int score = papersPublished + (teachingHours / 10);
+        if (score >= 10) {
+            System.out.println("Performance: Excellent");
+        } else if (score >= 5) {
+            System.out.println("Performance: Good");
+        } else {
+            System.out.println("Performance: Needs Improvement");
+        }
+    }
+}
+
+class Administrator extends Person implements Evaluatable {
+    String department;
+    int officeNumber;
+    int goalsMet;
+
+    public Administrator(String name, int age, String email, String department, int officeNumber, int goalsMet) {
+        super(name, age, email);
+        this.department = department;
+        this.officeNumber = officeNumber;
+        this.goalsMet = goalsMet;
+    }
+
+    @Override
+    public void displayDetails() {
+        System.out.println("---- Administrator Details ----");
+        System.out.println("Name: " + name);
+        System.out.println("Age: " + age);
+        System.out.println("Email: " + email);
+        System.out.println("Department: " + department);
+        System.out.println("Office No: " + officeNumber);
+        System.out.println("Goals Met: " + goalsMet);
+    }
+
+    @Override
+    public void evaluatePerformance() {
+        if (goalsMet >= 8) {
+            System.out.println("Performance: Excellent");
+        } else if (goalsMet >= 5) {
+            System.out.println("Performance: Good");
+        } else {
+            System.out.println("Performance: Needs Improvement");
+        }
+    }
+}
+
+public class abstractionu {
+
+    // Polymorphic method
+    public static void processPerson(Person person) {
+        person.displayDetails();
+        if (person instanceof Evaluatable) {
+            ((Evaluatable) person).evaluatePerformance();
+        }
+        System.out.println();
+    }
+
+    public static void main(String[] args) {
+  
+        Person[] people = new Person[3];
+
+        try {
+            people[0] = new Student("Sushil Kumar", 23, "sushil@gmail.com", 123, 3.4);
+            people[1] = new Professor("Dr. Ali", 45, "ali@uni.edu", 1001, 6, 120, 95000);
+            people[2] = new Administrator("Ms. Sara", 38, "sara@uni.edu", "IT", 201, 7);
+
+            for (int i = 0; i < people.length; i++) {
+                processPerson(people[i]);
+            }
+
+        } catch (IllegalArgumentException e) {
+            System.out.println("Error creating person: " + e.getMessage());
+        } catch (Exception e) {
+            System.out.println("Unexpected error: " + e.getMessage());
+        }
+    }
+}
