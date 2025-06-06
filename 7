@@ -1,0 +1,99 @@
+import java.util.Scanner;
+
+public class StudentGradeAnalysis {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        // Taking input
+        System.out.print("Enter number of students: ");
+        int numStudents = sc.nextInt();
+
+        System.out.print("Enter number of subjects: ");
+        int numSubjects = sc.nextInt();
+
+        String[] studentNames = new String[numStudents];
+        int[][] marks = new int[numStudents][numSubjects];
+        int[] totalMarks = new int[numStudents];
+        double[] averageMarks = new double[numStudents];
+        char[] grades = new char[numStudents];
+        boolean[] hasFailed = new boolean[numStudents];
+
+        sc.nextLine();
+
+        // Input student names and marks
+        for (int i = 0; i < numStudents; i++) {
+            System.out.print("Enter name of student " + (i + 1) + ": ");
+            studentNames[i] = sc.nextLine();
+
+            int total = 0;
+            boolean failed = false;
+
+            for (int j = 0; j < numSubjects; j++) {
+                System.out.print("Enter marks for subject " + (j + 1) + ": ");
+                marks[i][j] = sc.nextInt();
+                total += marks[i][j];
+
+                if (marks[i][j] < 40) {
+                    failed = true;
+                }
+            }
+            sc.nextLine(); // Clear buffer
+
+            totalMarks[i] = total;
+            averageMarks[i] = (double) total / numSubjects;
+            hasFailed[i] = failed;
+
+            // Grade assignment using decision-making
+            double avg = averageMarks[i];
+            if (avg >= 90) grades[i] = 'A';
+            else if (avg >= 80) grades[i] = 'B';
+            else if (avg >= 70) grades[i] = 'C';
+            else if (avg >= 60) grades[i] = 'D';
+            else grades[i] = 'F';
+        }
+
+        // Identify highest average
+        double maxAverage = averageMarks[0];
+        for (int i = 1; i < numStudents; i++) {
+            if (averageMarks[i] > maxAverage) {
+                maxAverage = averageMarks[i];
+            }
+        }
+
+        // Print formatted report
+        System.out.println("\n----- STUDENT REPORT -----");
+        System.out.printf("%-15s", "Name");
+        for (int s = 1; s <= numSubjects; s++) {
+            System.out.printf("Sub%-3d ", s);
+        }
+        System.out.printf("Total  Average Grade Status\n");
+
+        for (int i = 0; i < numStudents; i++) {
+            System.out.printf("%-15s", studentNames[i]);
+            for (int j = 0; j < numSubjects; j++) {
+                System.out.printf("%-7d", marks[i][j]);
+            }
+            String status = hasFailed[i] ? "Fail (Check Subjects)" : "Pass";
+            System.out.printf("%-7d %-7.2f %-6c %-15s\n", totalMarks[i], averageMarks[i], grades[i], status);
+        }
+
+        // Highlight students with highest average
+        System.out.println("\nTop Scorer(s):");
+        for (int i = 0; i < numStudents; i++) {
+            if (averageMarks[i] == maxAverage) {
+                System.out.println(studentNames[i] + " with average " + averageMarks[i]);
+            }
+        }
+
+        // Warnings for students failing in any subject
+        System.out.println("\nWarnings:");
+        for (int i = 0; i < numStudents; i++) {
+            if (hasFailed[i]) {
+                System.out.println("Warning: " + studentNames[i] + " has failed in one or more subjects.");
+            }
+        }
+
+        sc.close();
+    }
+}
+
