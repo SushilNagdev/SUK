@@ -1,0 +1,170 @@
+interface Drivable {
+    void drive(double distance) throws Exception;
+}
+
+interface Chargeable {
+    void charge(double units);
+}
+
+interface Refuelable {
+    void refuel(double liters);
+}
+
+abstract class Vehicle {
+    private String model;
+    private int year;
+    private double basePrice;
+
+    public Vehicle(String model, int year, double basePrice) {
+        this.model = model;
+        this.year = year;
+        this.basePrice = basePrice;
+    }
+
+    public String getModel() {
+        return model;
+    }
+
+    public int getYear() {
+        return year;
+    }
+
+    public double getBasePrice() {
+        return basePrice;
+    }
+
+    public abstract double calculateTax();
+    public abstract void displayInfo();
+
+    public String toString() {
+        return "Model: " + model + ", Year: " + year + ", Base Price: " + basePrice;
+    }
+}
+
+class ElectricCar extends Vehicle implements Drivable, Chargeable {
+    private double batteryLevel;
+
+    public ElectricCar(String model, int year, double basePrice, double batteryLevel) {
+        super(model, year, basePrice);
+        this.batteryLevel = batteryLevel;
+    }
+
+    public void drive(double distance) throws Exception {
+        double powerUsed = distance * 0.5;
+        if (batteryLevel < powerUsed) {
+            throw new Exception("Insufficient battery to drive.");
+        }
+        batteryLevel -= powerUsed;
+    }
+
+    public void charge(double units) {
+        batteryLevel += units;
+    }
+
+    public double calculateTax() {
+        return getBasePrice() * 0.01;
+    }
+
+    public void displayInfo() {
+        System.out.println(this);
+        System.out.println("Battery Level: " + batteryLevel + " units");
+    }
+}
+
+class HybridCar extends Vehicle implements Drivable, Chargeable, Refuelable {
+    private double batteryLevel;
+    private double fuelLevel;
+
+    public HybridCar(String model, int year, double basePrice, double batteryLevel, double fuelLevel) {
+        super(model, year, basePrice);
+        this.batteryLevel = batteryLevel;
+        this.fuelLevel = fuelLevel;
+    }
+
+    public void drive(double distance) throws Exception {
+        double powerUsed = distance * 0.25;
+        double fuelUsed = distance * 0.25;
+
+        if (batteryLevel < powerUsed || fuelLevel < fuelUsed) {
+            throw new Exception("Insufficient battery or fuel to drive.");
+        }
+        batteryLevel -= powerUsed;
+        fuelLevel -= fuelUsed;
+    }
+
+    public void charge(double units) {
+        batteryLevel += units;
+    }
+
+    public void refuel(double liters) {
+        fuelLevel += liters;
+    }
+
+    public double calculateTax() {
+        return getBasePrice() * 0.03;
+    }
+
+    public void displayInfo() {
+        System.out.println(this);
+        System.out.println("Battery Level: " + batteryLevel + " units, Fuel Level: " + fuelLevel + " liters");
+    }
+}
+
+class DieselCar extends Vehicle implements Drivable, Refuelable {
+    private double fuelLevel;
+
+    public DieselCar(String model, int year, double basePrice, double fuelLevel) {
+        super(model, year, basePrice);
+        this.fuelLevel = fuelLevel;
+    }
+
+    public void drive(double distance) throws Exception {
+        double fuelUsed = distance * 0.6;
+        if (fuelLevel < fuelUsed) {
+            throw new Exception("Insufficient fuel to drive.");
+        }
+        fuelLevel -= fuelUsed;
+    }
+
+    public void refuel(double liters) {
+        fuelLevel += liters;
+    }
+
+    public double calculateTax() {
+        return getBasePrice() * 0.05;
+    }
+
+    public void displayInfo() {
+        System.out.println(this);
+        System.out.println("Fuel Level: " + fuelLevel + " liters");
+    }
+}
+
+public class interfacee {
+    public static void main(String[] args) {
+        try {
+            System.out.println("=== Electric Car ===");
+            ElectricCar tesla = new ElectricCar("Tesla", 2022, 5000000, 2000);
+            tesla.displayInfo();
+            tesla.drive(20.0);
+            tesla.displayInfo();
+
+            System.out.println("\n=== Hybrid Car ===");
+            HybridCar hC = new HybridCar("Prius", 2023, 9000000, 200, 35);
+            hC.displayInfo();
+            hC.charge(43);
+            hC.refuel(90);
+            hC.displayInfo();
+
+            System.out.println("\n=== Diesel Car ===");
+            DieselCar dCar = new DieselCar("Ford F250", 2021, 3000000, 50);
+            dCar.displayInfo();
+            dCar.refuel(20);
+            dCar.drive(30);
+            dCar.displayInfo();
+
+        } catch (Exception e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+    }
+}
