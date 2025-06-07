@@ -1,0 +1,208 @@
+// Interfaces
+interface Driveable {
+    void drive(double distance) throws Exception;
+}
+
+interface Chargeable {
+    void charge(double units);
+}
+
+interface Refuelable {
+    void refuel(double liters);
+}
+
+// Abstract Class
+abstract class Vehicle {
+    private String model;
+    private int year;
+    private double basePrice;
+
+    public Vehicle(String model, int year, double basePrice) {
+        this.model = model;
+        this.year = year;
+        this.basePrice = basePrice;
+    }
+
+    public String getModel() { return model; }
+    public int getYear() { return year; }
+    public double getBasePrice() { return basePrice; }
+
+    public abstract double calculateTax();
+    public abstract void displayInfo();
+
+    @Override
+    public String toString() {
+        return "Model: " + model + ", Year: " + year + ", Base Price: $" + basePrice;
+    }
+}
+
+// ElectricCar
+class ElectricCar extends Vehicle implements Driveable, Chargeable {
+    private double batteryLevel;
+
+    public ElectricCar(String model, int year, double basePrice, double batteryLevel) {
+        super(model, year, basePrice);
+        this.batteryLevel = batteryLevel;
+    }
+
+    @Override
+    public void drive(double distance) throws Exception {
+        double powerUsed = distance * 0.5;
+        if (batteryLevel < powerUsed) {
+            throw new Exception("Insufficient battery to drive.");
+        }
+        batteryLevel -= powerUsed;
+    }
+
+    @Override
+    public void charge(double units) {
+        batteryLevel += units;
+    }
+
+    @Override
+    public double calculateTax() {
+        return getBasePrice() * 0.01;
+    }
+
+    @Override
+    public void displayInfo() {
+        System.out.println(this);
+        System.out.println("Battery Level: " + batteryLevel + " units");
+    }
+}
+
+// HybridCar
+class HybridCar extends Vehicle implements Driveable, Chargeable, Refuelable {
+    private double batteryLevel;
+    private double fuelLevel;
+
+    public HybridCar(String model, int year, double basePrice, double batteryLevel, double fuelLevel) {
+        super(model, year, basePrice);
+        this.batteryLevel = batteryLevel;
+        this.fuelLevel = fuelLevel;
+    }
+
+    @Override
+    public void drive(double distance) throws Exception {
+        double powerUsed = distance * 0.25;
+        double fuelUsed = distance * 0.25;
+
+        if (batteryLevel < powerUsed || fuelLevel < fuelUsed) {
+            throw new Exception("Insufficient battery or fuel to drive.");
+        }
+
+        batteryLevel -= powerUsed;
+        fuelLevel -= fuelUsed;
+    }
+
+    @Override
+    public void charge(double units) {
+        batteryLevel += units;
+    }
+
+    @Override
+    public void refuel(double liters) {
+        fuelLevel += liters;
+    }
+
+    @Override
+    public double calculateTax() {
+        return getBasePrice() * 0.03;
+    }
+
+    @Override
+    public void displayInfo() {
+        System.out.println(this);
+        System.out.println("Battery Level: " + batteryLevel + " units, Fuel Level: " + fuelLevel + " liters");
+    }
+}
+
+// DieselCar
+class DieselCar extends Vehicle implements Driveable, Refuelable {
+    private double fuelLevel;
+
+    public DieselCar(String model, int year, double basePrice, double fuelLevel) {
+        super(model, year, basePrice);
+        this.fuelLevel = fuelLevel;
+    }
+
+    @Override
+    public void drive(double distance) throws Exception {
+        double fuelUsed = distance * 0.6;
+        if (fuelLevel < fuelUsed) {
+            throw new Exception("Insufficient fuel to drive.");
+        }
+        fuelLevel -= fuelUsed;
+    }
+
+    @Override
+    public void refuel(double liters) {
+        fuelLevel += liters;
+    }
+
+    @Override
+    public double calculateTax() {
+        return getBasePrice() * 0.05;
+    }
+
+    @Override
+    public void displayInfo() {
+        System.out.println(this);
+        System.out.println("Fuel Level: " + fuelLevel + " liters");
+    }
+}
+
+// VehicleUtils Class
+class VehicleUtils {
+    public static void compareTaxes(Vehicle v1, Vehicle v2) {
+        double tax1 = v1.calculateTax();
+        double tax2 = v2.calculateTax();
+
+        System.out.println("\nTax Comparison:");
+        System.out.println(v1.getModel() + ": $" + tax1);
+        System.out.println(v2.getModel() + ": $" + tax2);
+
+        if (tax1 > tax2)
+            System.out.println(v1.getModel() + " has a higher tax.");
+        else if (tax1 < tax2)
+            System.out.println(v2.getModel() + " has a higher tax.");
+        else
+            System.out.println("Both have equal tax.");
+    }
+}
+
+// Main Class
+public class SmartVehicleSystem {
+    public static void main(String[] args) {
+        try {
+            // Create vehicles
+            ElectricCar tesla = new ElectricCar("Tesla Model 3", 2022, 50000, 100);
+            HybridCar prius = new HybridCar("Toyota Prius", 2021, 30000, 50, 20);
+            DieselCar ford = new DieselCar("Ford F-250", 2020, 40000, 30);
+
+            // Charging and refueling
+            tesla.charge(20);
+            prius.charge(10);
+            prius.refuel(10);
+            ford.refuel(20);
+
+            // Drive vehicles
+            tesla.drive(50);  // uses 25 units
+            prius.drive(40);  // uses 10 battery and 10 fuel
+            ford.drive(30);   // uses 18 fuel
+
+            // Display vehicle info
+            System.out.println("\n--- Vehicle Info ---");
+            tesla.displayInfo();
+            prius.displayInfo();
+            ford.displayInfo();
+
+            // Compare taxes
+            VehicleUtils.compareTaxes(tesla, prius);
+            VehicleUtils.compareTaxes(prius, ford);
+
+        } catch (Exception e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+    }
+}
